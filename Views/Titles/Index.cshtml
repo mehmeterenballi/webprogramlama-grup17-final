@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<MyUser> UserManager
+
+@model IEnumerable<VeritabaniProjesi.Models.Title>
+
+@{
+    ViewData["Title"] = "Basliklar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h1>Başlıklar</h1>
+
+    @{ MyUser myUser = await UserManager.GetUserAsync(User);}
+
+    <p>
+        @if (myUser != null)
+        {
+            <a asp-action="Create">Soru Sor</a>
+        }
+    </p>
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+<a class="text-dark" style="text-decoration: none !important" asp-controller="Posts" asp-action="Index" asp-route-title="@item.PostTitle">
+    <div class="list-group-item mb-3" style="padding: 0">
+        <div class="card m-0">
+            <div class="card-body">
+                <h4 class="card-title">
+                    @Html.DisplayFor(modelItem => item.PostTitle)
+                </h4>
+
+                <p class="card-text">
+                    @Html.DisplayFor(modelItem => item.Question.Content)
+                </p>
+            </div>
+
+            <div class="card-footer text-muted flex-row d-flex justify-content-between">
+                <div>
+                    @Html.DisplayFor(modelItem => item.Question.Sender)
+                </div>
+
+                @if (myUser != null && myUser.IsAdmin)
+                {
+<div class="text-nowrap col-md-4" align="center">
+    <a class="align-items-center" asp-action="Delete" asp-route-id="@item.PostTitle" asp-route-title="@ViewData["Title"]">Sil</a>
+</div>}
+
+                <div>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </div>
+            </div>
+        </div>
+    </div>
+</a>}
+    </div>
+</div>
