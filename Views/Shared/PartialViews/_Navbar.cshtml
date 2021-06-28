@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<MyUser> SignInManager
+@inject UserManager<MyUser> UserManager
+
+<header>
+    <nav class="navbar navbar-expand-lg smart-scroll navbar-light bg-light nav-pills fixed-top p-3" id="navbar">
+
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <font class="text-info text-uppercase navbar-brand"><b>degistir.org</b></font>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse justify-content-end align-items-center" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item" id="index">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index"
+                       style="margin-right:20px;">Ana Sayfa <span class="sr-only">(current)</span></a>
+                </li>
+
+
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    
+                    <li class="nav-item">
+                        <p class="nav-link">Merhaba, @UserManager.GetUserName(User)!</p>
+                    </li>
+                    <li class="nav-item">
+                        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Çıkış Yap</button>
+                        </form>
+                    </li>
+
+                    MyUser user = await UserManager.GetUserAsync(User);
+                    if (user != null && user.IsAdmin)
+                    {
+                        <li class="nav-item">
+                            <a id="manage" class="nav-link" asp-area="" asp-controller="Announcements" asp-action="Index">Duyuruları Yönet</a>
+                        </li>
+                    }
+
+                } 
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" id="register" asp-area="Identity" asp-page="/Account/Register">Kayıt Ol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="login" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
+                    </li>
+                }
+
+
+            </ul>
+            <form class="form-inline my-2 my-lg-0 px-90 nav-item" asp-controller="Titles" asp-action="Index" method="get">
+                <input class="form-control mr-sm-2" placeholder="Ara" name="SearchString" />
+                <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Ara" />
+            </form>
+        </div>
+
+        <script>
+            // add padding top to show content behind navbar
+            $('body').css('padding-top', $('.navbar').outerHeight() + 'px');
+
+            // detect scroll top or down
+            let ss = $('.smart-scroll');
+
+            if (ss.length > 0) { // check if element exists
+                let last_scroll_top = 0;
+
+                $(window).on('scroll', () => {
+                    scroll_top = $(this).scrollTop();
+                    //console.log(scroll_top);
+
+
+                    if (scroll_top < last_scroll_top) {
+                        ss.removeClass('scrolled-down').addClass('scrolled-up');
+                    }
+                    else if ($(window).scrollTop() > $('.navbar').outerHeight() * 0.75) {
+                        ss.removeClass('scrolled-up').addClass('scrolled-down');
+                    }
+                    last_scroll_top = scroll_top;
+                });
+            }
+
+        </script>
+
+    </nav>
+</header>

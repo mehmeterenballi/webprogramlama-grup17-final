@@ -1,0 +1,23 @@
+﻿@model IEnumerable<VeritabaniProjesi.Models.Announcement>
+
+<hr />
+@foreach (var annoucment in Model)
+{
+    <div style="display: table-row">
+        <h3>@annoucment.Title</h3>
+        <p class="lead">@annoucment.Content</p>
+        <p>@annoucment.Date</p>
+
+        
+        <ul class="list-group">
+        @foreach (var source in annoucment.SourceList)
+        {
+            <li class="list-group-item">
+                <a href ="@source">@source</a>
+            </li>
+            
+        }
+        </ul>
+        <hr />
+    </div>
+}
