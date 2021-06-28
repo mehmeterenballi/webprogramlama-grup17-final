@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- <script type="text/javascript" src="js/main.js"> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.js"></script>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/main.css">
+
+    <title>@ViewData["Title"]</title>
+</head>
+
+<body>
+    @{
+        await Html.RenderPartialAsync("PartialViews/_Navbar");
+    }
+        
+    <div style="min-height: 50vh">
+        @RenderBody()
+    </div>
+
+    @{
+        await Html.RenderPartialAsync("PartialViews/_Footer");
+    }
+    
+    @await RenderSectionAsync("Scripts", false)
+</body>
+
+</html>
