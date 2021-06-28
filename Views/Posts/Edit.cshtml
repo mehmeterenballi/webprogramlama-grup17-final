@@ -1,0 +1,50 @@
+﻿@model VeritabaniProjesi.Models.Post
+
+@{
+    ViewData["Title"] = Context.Request.Query["title"].ToString();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+<h1>Düzenle</h1>
+
+<h4>Gönderi</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="PostTitle" class="control-label">Gönderi Başlığı</label>
+                <input asp-for="PostTitle" class="form-control" />
+                <span asp-validation-for="PostTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sender" class="control-label">Gönderen</label>
+                <input asp-for="Sender" class="form-control" />
+                <span asp-validation-for="Sender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label">İçerik</label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <script>$("textarea").autoResize()</script>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index", asp-route-title="@TempData["Title"]">Listeye Geri Dön</a>
+</div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("PartialViews/_ValidationScriptsPartial");}
+}

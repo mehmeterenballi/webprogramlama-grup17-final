@@ -1,0 +1,46 @@
+﻿@model VeritabaniProjesi.Models.Post
+
+
+@{
+    ViewData["Title"] = Context.Request.Query["title"].ToString();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+<h1>Oluştur</h1>
+
+<h4>@ViewData["Title"]</h4>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" type="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label">İçerik</label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <script>$("textarea").autoResize()</script>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" asp-for="PostTitle" value="@ViewData["Title"]" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Oluştur" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Listeye Geri Dön</a>
+</div>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("PartialViews/_ValidationScriptsPartial");}
+}

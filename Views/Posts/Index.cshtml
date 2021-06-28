@@ -1,0 +1,184 @@
+﻿@model IEnumerable<VeritabaniProjesi.Models.Post>
+
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.CodeAnalysis
+
+@inject SignInManager<MyUser> SignInManager
+@inject UserManager<MyUser> UserManager
+
+
+@{
+    ViewData["Title"] = Context.Request.Query["title"].ToString();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <h1>@Model.First().PostTitle</h1>
+   
+    @{ MyUser myUser = UserManager.GetUserAsync(User).Result; }
+
+    <p>
+        @if (myUser != null)
+        {
+            <a asp-action="Create" asp-route-title="@Model.First().PostTitle">Yorum yaz</a>
+        }
+    </p>
+
+    @if (Model.Any())
+    {
+        @if (myUser != null)
+        {
+            <script>
+                const addLikeButtonListener = (buttonName, buttonId, value, buttonParent = null, ratingName = null) => {
+                    buttonName += buttonId;
+
+
+                    if (typeof (buttonName) !== "string" && typeof(value) !== "string")
+                        throw "string tipinde olmalı";
+
+                    $(buttonName).click(() => {
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("Like")',
+                            data: { id: buttonId, value: value },
+                            dataType: "text",
+                            success: (msg) => {
+                                if (buttonParent != null) {
+                                    buttonParent += buttonId;
+                                    $(buttonParent).html("<p>Çoktan Oy Verdin!</p>");
+                                }
+
+                                if (ratingName != null) {
+                                    ratingName += buttonId;
+                                    $(ratingName).text(msg);
+                                }
+                            },
+                            error: (req, status, error) => { console.log(error); }
+                        });
+                    });
+
+                }
+            </script>
+
+            if (myUser.IsAdmin)
+            {
+                <script>
+                    const addBanButtonListener = (buttonName, buttonId, sender, buttonParent = null) => {
+                    buttonName += buttonId;
+
+
+                    if (typeof (buttonName) !== "string" && typeof(value) !== "string")
+                        throw "string tipinde olmalı";
+
+                    $(buttonName).click(() => {
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("BanishUser")',
+                            data: {id: buttonId, nickName: sender},
+                            dataType: "text",
+                            success: msg => {
+                                console.log(msg);
+                                if (buttonParent != null) {
+                                    buttonParent += buttonId;
+                                    $(buttonParent).html("Bu gönderi yenileme sırasında değişecek.");
+                                }
+                            },
+                            error: (req, status, error) => { console.log(error); }
+                        });
+                    });
+
+                }
+                </script>
+            }
+        }
+
+
+        <div class="list-group">
+            @foreach (var item in Model)
+            {
+                bool canEdit = myUser != null && (myUser.NickName == item.Sender || myUser.IsAdmin);
+
+
+                <div class="list-group-item mb-3" style="padding: 0">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                @Html.DisplayFor(modelItem => item.Content)
+                            </p>
+                        </div>
+
+                        <div class="card-footer text-muted flex-row d-flex justify-content-between">
+                            <div>
+                                @Html.DisplayFor(modelItem => item.Sender)
+                            </div>
+
+                            @if (canEdit)
+                            {
+                                <div class="d-flex row">
+                                    <div class="text-nowrap col-md-4" align="center">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-title="@ViewData["Title"]">Düzenle</a>
+                                    </div>
+                                    <div class="text-nowrap col-md-4" align="center">
+                                        <a class="align-items-center" asp-action="Details" asp-route-id="@item.Id" asp-route-title="@ViewData["Title"]">Detaylar</a>
+                                    </div>
+                                    <div class="text-nowrap col-md-4" align="center">
+                                        <a class="align-items-center" asp-action="Delete" asp-route-id="@item.Id" asp-route-title="@ViewData["Title"]">Sil</a>
+                                    </div>
+                                </div>
+                            }
+
+                            <div>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container">
+                    
+                    <div class="col-3" id ="Rating@(item.Id)"><h3>@item.Rating Likes</h3></div>
+
+                    @if (myUser != null)
+                    {
+                        <div class="col-9">
+                            @if (!item.PeopleWhoLiked.Contains(myUser.NickName))
+                            {
+                            
+                                <div id="PostButtons@(item.Id)">
+                                    <button class="btn btn-success" id="LikeButton@(item.Id)">Beğen</button>
+                                    <script>addLikeButtonListener("#LikeButton", "@(item.Id)", "1", "#PostButtons", "#Rating")</script>
+
+                                    <button class="btn btn-secondary" id="DislikeButton@(item.Id)">Beğenme</button>
+                                    <script>addLikeButtonListener("#DislikeButton", "@(item.Id)", "-1", "#PostButtons", "#Rating")</script>
+                                    
+                                </div>
+                            }
+
+                            else
+                            {
+                                <p>Çoktan Oy Verdin!</p>
+                            }
+
+                            
+                            @if (myUser.IsAdmin)
+                            {
+                                <div id="BanButtons@(item.Id)" style="margin-top:10px; margin-bottom:10px;">
+                                    <button class="btn btn-danger" id="BanButton@(item.Id)">Hesabı Kilitle</button>
+                                    <script>addBanButtonListener("#BanButton", "@(item.Id)", "@(item.Sender)", "#BanButtons")</script>
+                                </div>
+                            }
+                           
+                        </div>
+                    }
+                    </div>
+                </div>
+            }
+        </div>
+
+    }
+
+    else
+    {
+        <h3 class="container">Hiç girdi bulunmadı</h3>
+    }
+</div>
