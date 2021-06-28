@@ -1,0 +1,69 @@
+﻿@model VeritabaniProjesi.ViewModels.HomeViewModel
+
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<MyUser> SignInManager
+@inject UserManager<MyUser> UserManager
+
+@{ ViewData["Title"] = "Ana Sayfa"; }
+
+<div class="container-fluid mb-5"
+     style="background: url('img/imza-kampanya.jpg') no-repeat center center; background-size:cover;">
+
+    <div class="d-flex flex-column justify-content-center align-items-center p-5">
+
+        <p class="h2 p-3 m-3">Amacımız</p>
+        <p class="p-3 m-3 col-md-6">
+            degistir.org ' da dünyayı değiştirmek için eline bir şans geçer. Bunu kullanmak için imza kampanyanı başlat ve dilekçeni muhataplarınla beraber yaz.
+        </p>
+
+
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit" class="btn btn-success">Çıkış Yap</button>
+            </form>
+        }
+         else{
+            <div class=" p-3 m-3">
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg">Kayıt Ol</a>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg">Giriş Yap</a>
+            </div>
+         }
+    </div>
+</div>
+
+@*<div class="container">
+    <h3 class="h3"> Duyurular</h3>
+    @{ await Html.RenderPartialAsync("PartialViews/_Announcements", Model.Announcement);}
+</div>*@
+
+<div class="container-fluid" style="margin-top:20px;">
+    <div class="row justify-content-center">
+        <h1 class="h3">Bir şeyleri değiştirmek mi istiyorsun?</h1>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-6">
+            <img src="img/Qs.png" class="img-fluid rounded" style="width: 100%;" alt="Kampanya Başlat!">
+        </div>
+        <div class="col-md-6">
+            <p class="lead">
+                degistir.org ' da dünyayı değiştirmek için eline bir şans geçer. Bunu kullanmak için imza kampanyanı başlat ve dilekçeni muhataplarınla beraber yaz.
+            </p>
+            
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a class="btn btn-primary btn-lg" asp-controller="Titles" asp-action="Create">
+                    Kampanya başlat!
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary btn-lg" asp-area="Identity" asp-page="/Account/Register">
+                    Kampanya başlatmak İçin Kayıt Ol!
+                </a>
+            }
+
+        </div>
+    </div>
+</div>
